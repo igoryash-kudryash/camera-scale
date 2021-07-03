@@ -19,7 +19,7 @@ Camera plan
 ```bash
 python yoloface_gpu.py --video stream --method area
 ```
-## Works
+## Principle of operation
 Programm detects plans according to the picture below and outputs the plan in the right upper corner in green. 
 ![Test Image 2](Plans.jpg)
 Additionally, it detects transition plans, such as "Extreme<-bBig", "Close up<->medium" and "Medium<->long" and outputs them in yellow. 
