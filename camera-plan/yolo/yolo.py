@@ -23,7 +23,7 @@ from keras.models import load_model
 from timeit import default_timer as timer
 from PIL import ImageDraw, Image
 
-from my_utils import find_crucial_box, detect_plan_scale, decide_plan, suggest_scale
+from my_utils import find_crucial_box, detect_plan_scale, decide_plan
 
 
 class YOLO(object):
@@ -123,7 +123,11 @@ class YOLO(object):
         print('*** Found {} face(s) for this image'.format(len(out_boxes)))
         thickness = (image.size[0] + image.size[1]) // 400
 
+        end_time = timer()
+        print('*** Processing time: {:.2f}ms'.format((end_time -
+                                                      start_time) * 1000))
         if len(out_boxes) == 0:
+            print("NO FACE:", image)
             return image, "warning"  # если не нашло никакого лица
         crucial_box_index = find_crucial_box(out_boxes, method=method)
         crucial_box = out_boxes[crucial_box_index]
@@ -149,9 +153,7 @@ class YOLO(object):
         #             outline=(51, 178, 255))
         #     del draw
 
-        end_time = timer()
-        print('*** Processing time: {:.2f}ms'.format((end_time -
-                                                      start_time) * 1000))
+        print("WITH FACE:", image)
         return image, crucial_box
 
     def close_session(self):
@@ -202,8 +204,6 @@ def detect_video(model, video_path=None, output=None, method="area"):
     curr_fps = 0
     fps = "FPS: ??"
     prev_time = timer()
-    ratio_arr = []
-    crucial_face_arr = []
     ###################################
     while True:
         ret, frame = vid.read()
@@ -214,13 +214,16 @@ def detect_video(model, video_path=None, output=None, method="area"):
             image, crucial_face = model.detect_image(image, method=method)
             if crucial_face == "warning":
                 print("\nNo faces detected!\n")
+                cv2.rectangle(frame, (1, 1), (265, 25), (0, 0, 0), cv2.FILLED)
+                cv2.putText(frame, "Extreme long-shot", (5, (0 * 20) + 20), cv2.FONT_HERSHEY_SIMPLEX, 0.75,
+                            (15, 255, 15), 2)
+                cv2.imshow("face", frame)
+                if cv2.waitKey(25) & 0xFF == ord('q'):
+                    break
                 continue
             ratio = detect_plan_scale(crucial_face, frame_height, frame_width, method=method)
 
-            ratio_arr.append(ratio)
-            crucial_face_arr.append(crucial_face)
-
-            scale_text = decide_plan(ratio, method=method)
+            scale_text, clr = decide_plan(ratio, method=method)
 
             result = np.asarray(image)
 
@@ -241,12 +244,14 @@ def detect_video(model, video_path=None, output=None, method="area"):
             # ]
             # cv2.rectangle(result, (5, 5), (120, 50), (0, 0, 0), cv2.FILLED)
 
-            suggest_text = suggest_scale(ratio, crucial_face, frame_height, frame_width, method=method)
+            print("-----------------------------------")
+            print("BBOX FOR CRUCIAL FACE:", crucial_face)
+            print("PLAN:", scale_text)
+            print("RATIO:", ratio)
+            print("-----------------------------------")
 
-            sug_num = len(suggest_text)
-            cv2.putText(result, scale_text, (5, (sug_num * 20) + 20), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (15, 15, 235), 1)
-            for i, sug in enumerate(suggest_text):
-                cv2.putText(result, sug, (5, (i * 20) + 20), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (15, 235, 15), 1)
+            cv2.rectangle(result, (1, 1), (len(scale_text) * 15, 25), (0, 0, 0), cv2.FILLED)
+            cv2.putText(result, scale_text, (1, (0 * 20) + 20), cv2.FONT_HERSHEY_SIMPLEX, 0.75, clr, 2)
 
             # for (i, (txt, val)) in enumerate(info):
             #     text = '{}: {}'.format(txt, val)
