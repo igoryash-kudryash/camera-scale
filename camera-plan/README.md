@@ -20,8 +20,10 @@ Camera plan
 python yoloface_gpu.py --video stream --method area
 ```
 ## Works
-![alt text](https://github.com/igoryash-kudryash/camera-scale/edit/main/camera-plan/camera-plan/Plans.jpg?raw=true)
+Programm detects plans according to the picture below and outputs the plan in the right upper corner in green. 
 ![Test Image 2](Plans.jpg)
+Additionally, it detects transition plans, such as "Extreme<-bBig", "Close up<->medium" and "Medium<->long" and outputs them in yellow. 
+The longest scale is "Extreme long shot" and programm detects it as zero faces on image.
 
 ## YOLOv3's architecture
 
