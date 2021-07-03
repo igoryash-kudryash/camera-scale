@@ -20,7 +20,7 @@ Camera plan
 python yoloface_gpu.py --video stream --method area
 ```
 ## Works
-![alt text](https://github.com/igoryash-kudryash/camera-scale/edit/main/camera-plan/Plans.jpg?raw=true)
+![alt text](https://github.com/igoryash-kudryash/camera-scale/edit/main/camera-plan/camera-plan/Plans.jpg?raw=true)
 
 ## YOLOv3's architecture
 
