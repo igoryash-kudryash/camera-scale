@@ -7,7 +7,7 @@
 - CUDA 10.0+
 - Clone repository
 ```bash
-git clone https://git.miem.hse.ru/gchkabisov2/camera-plan-scale.git
+git clone https://github.com/igoryash-kudryash/camera-scale.git
 ```
 - Install requirements
 ```bash
