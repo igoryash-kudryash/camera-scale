@@ -23,6 +23,7 @@ python yoloface_gpu.py --video stream --method area
 ## YOLOv3's architecture
 
 Credit: https://towardsdatascience.com/yolo-v3-object-detection-53fb7d3bfe6b
+
 Arxiv: https://arxiv.org/abs/1804.02767
 
 ## Model Weights
